@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  backend:
+    # Indica a Docker que el contexto de construcción de la imagen está en la carpeta 'backend'
+    # y que el archivo a usar es 'Dockerfile'.
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    # Le da un nombre descriptivo al contenedor para que sea fácil de identificar.
+    container_name: deli-lunch-backend
+    # Mapea los puertos. El formato es <puerto_host>:<puerto_contenedor>.
+    # Esto te permite acceder a tu API en el puerto 4000 de tu máquina local.
+    ports:
+      - "4000:4000"
+    # Define un volumen para la persistencia de la base de datos SQLite.
+    # El archivo de la base de datos en el contenedor (/app/db) se mantendrá en la carpeta
+    # local de tu backend, evitando que se pierdan los datos al detener el contenedor.
+    volumes:
+      - ./backend/db:/app/db
+
+volumes:
+  deli-lunch-data:
