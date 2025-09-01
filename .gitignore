@@ -1,4 +1,29 @@
-#Completar
+# Default ignored files
+/shelf/
+/workspace.xml
+*.bkp
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
 
+# Docker
+*.jar
+*.tar
+*.gz
+*.7z
+*.rar
+*.img
+*.dockerfile
+
+# Docker Compose
+docker-compose.override.yml
+
+
+#Archivos fran
+comandosGit.md
+gitignore.txt
 
 
