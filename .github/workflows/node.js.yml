@@ -1,4 +1,5 @@
 name: Node.js CI
+
 on:
   push:
     branches: [ "main" ]
@@ -6,13 +7,13 @@ on:
     branches: [ "main" ]
   schedule:
     # Este cron se ejecuta todos los días a las 12:00 PM (mediodía) UTC.
-    # Puedes usar una herramienta como crontab.guru para generar el cron que necesites.
+    # Puedes modificar la hora si lo necesitas.
     - cron: '0 12 * * *'
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
