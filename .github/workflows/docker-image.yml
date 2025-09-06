@@ -13,6 +13,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    #1 clono el repo
+    - name: clonando repo
     - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+    #2 configuro dokcer
+    - name: docker build
+    - uses: docker/setup-buildx-action@v4
+    #uso v4 porque es la misma del chekout
+
+    #3 levantar docker con docker-compose
+    - name: levantar docker
+      run: docker-compose up -d --build
+
+    #trato backend y frontend por separado
+    #4 backend
+    - name: run backend tests
+      run: docker exec deli-lunch-backend npm test
+
+    #5 frontend
+    - name: build forntend
+      run: docker exec deli-lunch-frontend npm run build
+
+    #6 apagar los servicios del docker
+    - name: Stop services
+      run: docker-compose down
+    
