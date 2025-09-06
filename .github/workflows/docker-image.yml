@@ -13,28 +13,41 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    #CONTRUYO
     #1 clono el repo
     - name: clonando repo
     - uses: actions/checkout@v4
+    
     #2 configuro dokcer
     - name: docker build
     - uses: docker/setup-buildx-action@v4
     #uso v4 porque es la misma del chekout
+    #buildx surve para construir imagenes de Docker
 
     #3 levantar docker con docker-compose
     - name: levantar docker
       run: docker-compose up -d --build
+    #contruye las imagenes de Docker basandose en mi dockercompose
+    #-d para hacerlo en segundo plano
+    #resultado del paso3: Los conteneodres quedan listo para correr la acciones
 
+    #EMPIEZA EL PROCESO
     #trato backend y frontend por separado
     #4 backend
     - name: run backend tests
       run: docker exec deli-lunch-backend npm test
+    #Ejecuta los tests que tengo en backend/test
+    #docker exec es para correr n comando dentro del contenedor que ya levanté -> deli-lunch-backend
+  
 
     #5 frontend
     - name: build forntend
       run: docker exec deli-lunch-frontend npm run build
+    #genero el build del front dentro del contenedor
+    
 
     #6 apagar los servicios del docker
     - name: Stop services
       run: docker-compose down
+    #apago y limpo los contenedores levantados
     
