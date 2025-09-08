@@ -26,7 +26,7 @@ jobs:
 
       # 3. Levantar docker con docker-compose
     - name: Start Docker services
-      run: docker-compose up -d --build
+      run: docker compose up -d --build
       # Construye las imágenes de Docker basándose en el docker-compose
       # -d para hacerlo en segundo plano
       # Resultado del paso: Los contenedores quedan listos para correr las acciones
@@ -36,16 +36,16 @@ jobs:
 
     # 4. Backend - Ejecutar tests
     - name: Run backend tests
-      run: docker exec deli-lunch-backend npm test
+      run: docker compose exec backend npm test
       # Ejecuta los tests que tengo en backend/test
       # docker exec es para correr un comando dentro del contenedor ya levantado -> deli-lunch-backend
 
      # 5. Frontend - Build y test
     - name: Build frontend
-      run: docker exec deli-lunch-frontend npm run build
+      run: docker compose exec frontend npm run build
       # Genero el build del front dentro del contenedor
 
       # 6. Apagar los servicios del docker
     - name: Stop Docker services
-      run: docker-compose down
+      run: docker compose down
       # Apago y limpio los contenedores levantados
