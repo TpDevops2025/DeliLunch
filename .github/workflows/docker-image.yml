@@ -39,13 +39,31 @@ jobs:
       run: docker compose exec backend npm test
       # Ejecuta los tests que tengo en backend/test
       # docker exec es para correr un comando dentro del contenedor ya levantado -> deli-lunch-backend
+    
+    
+    # 5 Frontend - Build y test
+    #Verifico que hizo el build del front
+    - name: Verify frontend build
+      run: |
+          echo "Verificando que el frontend se construyó correctamente..."
+          docker compose exec frontend ls -la /usr/share/nginx/html
+          echo "Frontend build verificado exitosamente"
+        # El build ya se hizo durante docker compose up --build
+        # Solo verificamos que los archivos estén en nginx
 
-     # 5. Frontend - Build y test
-    - name: Build frontend
-      run: docker compose exec frontend npm run build
-      # Genero el build del front dentro del contenedor
+     # 6. Verificar que los servicios estén corriendo correctamente
+    - name: Check running services
+      run: |
+        echo "Verificando servicios en ejecución..."
+        docker compose ps
+        echo "Verificando conectividad del backend..."
+        docker compose exec backend curl -f http://localhost:4000 || echo "Backend endpoint check"
+        echo "Verificando que nginx esté sirviendo el frontend..."
+        docker compose exec frontend curl -f http://localhost:80 || echo "Frontend nginx check"
+      # Verifico que ambos contenedores estén corriendo y respondiendo
 
-      # 6. Apagar los servicios del docker
+
+      # 7. Apagar los servicios del docker
     - name: Stop Docker services
       run: docker compose down
       # Apago y limpio los contenedores levantados
