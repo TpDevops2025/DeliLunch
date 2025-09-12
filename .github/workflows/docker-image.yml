@@ -41,24 +41,67 @@ jobs:
       # docker exec es para correr un comando dentro del contenedor ya levantado -> deli-lunch-backend
     
     
-      # 5. Frontend - Verificar que está corriendo
-    - name: Verify frontend is running
-      run: docker compose exec frontend npm list react
-      # Verifico que React esté instalado y el contenedor funcione
+    name: Docker Image CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # CONSTRUYO
+    # 1. Clono el repositorio
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      # Clono el repositorio para acceder a todos los archivos
+
+    # 2. Configuro Docker
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+      # BuildX sirve para construir imágenes de Docker
+
+    # 3. Levantar docker con docker compose
+    - name: Start Docker services
+      run: docker compose up -d --build
+      # Construye las imágenes de Docker basándose en el docker-compose
+      # -d para hacerlo en segundo plano
+      # Resultado del paso: Los contenedores quedan listos para correr las acciones
+
+    # EMPIEZA EL PROCESO
+    # Trato backend y frontend por separado
+
+    # 4. Backend - Ejecutar tests
+    - name: Run backend tests
+      run: docker compose exec backend npm test
+      # Ejecuta los tests que tengo en backend/test
+      # Uso el nombre del servicio 'backend' en lugar del container_name
+
+    # 5. Frontend - Verificar build
+    - name: Verify frontend build
+      run: docker compose exec frontend ls -la /usr/share/nginx/html
+      # El build ya se hizo durante docker compose up --build
+      # Solo verificamos que los archivos estén en la carpeta correcta de nginx
+      # En nginx, /usr/share/nginx/html es la carpeta pública desde donde se sirven esos archivos
 
     # 6. Verificar que los servicios estén corriendo correctamente
     - name: Check running services
       run: docker compose ps
-      # Verifico que ambos contenedores estén corriendo
+      # Primero listamos los contenedores activos para confirmar que backend y frontend están levantados
 
     - name: Test backend connectivity
       run: docker compose exec backend node -e "console.log('Backend container is working')"
       # Verifico que el contenedor backend responde usando node
+      # Este comando confirma que Node.js está funcionando en el backend
 
     - name: Test frontend connectivity  
-      run: docker compose exec frontend node -e "console.log('Frontend container is working')"
-      # Verifico que el contenedor frontend responde usando node
-
+      run: docker compose exec frontend ls /usr/share/nginx/html/index.html
+      # Verifico que nginx tenga los archivos del frontend
+      # Si encuentra index.html significa que el build se hizo correctamente y nginx lo está sirviendo
 
       # 7. Apagar los servicios del docker
     - name: Stop Docker services
