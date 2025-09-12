@@ -41,27 +41,30 @@ jobs:
       # docker exec es para correr un comando dentro del contenedor ya levantado -> deli-lunch-backend
     
     
-    # 5 Frontend - Build y test
-    #Verifico que hizo el build del front
+       # 5 Frontend - Build y test
+    # Verifico que el build del frontend generó archivos estáticos
+    # En nginx, /usr/share/nginx/html es la carpeta pública desde donde se sirven esos archivos
+    # Con este comando listamos el contenido para comprobar que estén (ej: index.html, css, js)
     - name: Verify frontend build
-      run: |
-          echo "Verificando que el frontend se construyó correctamente..."
-          docker compose exec frontend ls -la /usr/share/nginx/html
-          echo "Frontend build verificado exitosamente"
-        # El build ya se hizo durante docker compose up --build
-        # Solo verificamos que los archivos estén en nginx
+      run: docker compose exec frontend ls -la /usr/share/nginx/html
+      # El build ya se hizo durante docker compose up --build
+      # Solo verificamos que los archivos estén en la carpeta correcta de nginx
 
-     # 6. Verificar que los servicios estén corriendo correctamente
+
+    # 6. Verificar que los servicios estén corriendo correctamente
+    # Primero listamos los contenedores activos para confirmar que backend y frontend están levantados
     - name: Check running services
-      run: |
-        echo "Verificando servicios en ejecución..."
-        docker compose ps
-        echo "Verificando conectividad del backend..."
-        docker compose exec backend curl -f http://localhost:4000 || echo "Backend endpoint check"
-        echo "Verificando que nginx esté sirviendo el frontend..."
-        docker compose exec frontend curl -f http://localhost:80 || echo "Frontend nginx check"
-      # Verifico que ambos contenedores estén corriendo y respondiendo
+      run: docker compose ps
+      # Verifico que ambos contenedores estén corriendo
 
+    # Probamos la conectividad del backend consultando su endpoint en http://localhost:4000
+    # curl -f devuelve error si la respuesta no es 2xx/3xx → así validamos que realmente responde
+    - run: docker compose exec backend curl -f http://localhost:4000
+
+    # Probamos que nginx esté sirviendo el frontend en http://localhost:80
+    # Si devuelve contenido (ej: index.html), significa que el frontend está accesible
+    - run: docker compose exec frontend curl -f http://localhost:80
+      # Verifico que nginx sirva los archivos del frontend correctamente
 
       # 7. Apagar los servicios del docker
     - name: Stop Docker services
