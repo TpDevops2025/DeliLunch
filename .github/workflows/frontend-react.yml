@@ -1,0 +1,33 @@
+# CI del frontend: instala dependencias y compila el build de React.
+name: Frontend (React)
+
+on:
+  push:
+    branches: [ "main" ]
+    paths: [ "frontend/**", ".github/workflows/frontend-react.yml" ]
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "frontend/**", ".github/workflows/frontend-react.yml" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React
+        run: npm run build
