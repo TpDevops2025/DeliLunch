@@ -2,10 +2,9 @@
 name: Frontend (React)
 
 on:
-  push:
-    branches: [ "main" ]
-    paths: [ "frontend/**", ".github/workflows/frontend-react.yml" ]
   pull_request:
+    branches: [ "main" ]          # corre SIEMPRE en PR → el ruleset no queda "Expected"
+  push:
     branches: [ "main" ]
     paths: [ "frontend/**", ".github/workflows/frontend-react.yml" ]
 
