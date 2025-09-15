@@ -66,5 +66,5 @@ Estas son las tecnologías utilizadas para el desarrollo del proyecto Deli Lunch
 
 
 🎓 Proyecto realizado como parte de la materia Arquitectura Web – 2025
-👩‍💻 Desarrolladora: [Magalí Sarmiento]
+👩‍💻 Desarrolladora: [Magalí Sarmiento] & Francisco Campora
 
