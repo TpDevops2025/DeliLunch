@@ -2,10 +2,9 @@
 name: Backend (Node)
 
 on:
-  push:
-    branches: [ "main" ]
-    paths: [ "backend/**", ".github/workflows/backend-node.yml" ]
   pull_request:
+    branches: [ "main" ]          # corre SIEMPRE en PR → el ruleset no queda "Expected"
+  push:
     branches: [ "main" ]
     paths: [ "backend/**", ".github/workflows/backend-node.yml" ]
 
