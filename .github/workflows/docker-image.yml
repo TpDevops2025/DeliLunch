@@ -1,66 +1,76 @@
 name: Docker Image CI
 
 on:
-  push:
-    branches: ["main"]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]   # En PR: construye pero NO publica
+  push:
+    branches: [ "main" ]   # En main: construye y publica
+  workflow_dispatch:       # Permite lanzarlo manualmente desde la UI
+
+env:
+  IMAGE_BACKEND: ${{ secrets.DOCKERHUB_USERNAME }}/deli-backend
+  IMAGE_FRONTEND: ${{ secrets.DOCKERHUB_USERNAME }}/deli-frontend
 
 jobs:
-  build:
+  build_pr:
+    if: github.event_name == 'pull_request'
+    name: Build images (no push)
     runs-on: ubuntu-latest
-    
     steps:
-    # CONSTRUYO
-    # 1. Clono el repositorio
-    - name: Checkout repository
-      uses: actions/checkout@v4
-      # Clono el repositorio para acceder a todos los archivos
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # 2. Configuro Docker
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
-      # BuildX sirve para construir imágenes de Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    # 3. Levantar docker con docker compose
-    - name: Start Docker services
-      run: docker compose up -d --build
-      # Construye las imágenes de Docker basándose en el docker-compose
-      # -d para hacerlo en segundo plano
-      # Resultado del paso: Los contenedores quedan listos para correr las acciones
+      - name: Build backend image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: false
 
-    # EMPIEZA EL PROCESO
-    # Trato backend y frontend por separado
+      - name: Build frontend image (no push)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: false
 
-    # 4. Backend - Ejecutar tests
-    - name: Run backend tests
-      run: docker compose exec backend npm test
-      # Ejecuta los tests que tengo en backend/test
-      # Uso el nombre del servicio 'backend' en lugar del container_name
+  publish_main:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    name: Build & Push images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    # 5. Frontend - Verificar build
-    - name: Verify frontend build
-      run: docker compose exec frontend ls -la /usr/share/nginx/html
-      # El build ya se hizo durante docker compose up --build
-      # Solo verificamos que los archivos estén en la carpeta correcta de nginx
-      # En nginx, /usr/share/nginx/html es la carpeta pública desde donde se sirven esos archivos
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    # 6. Verificar que los servicios estén corriendo correctamente
-    - name: Check running services
-      run: docker compose ps
-      # Primero listamos los contenedores activos para confirmar que backend y frontend están levantados
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Test backend connectivity
-      run: docker compose exec backend node -e "console.log('Backend container is working')"
-      # Verifico que el contenedor backend responde usando node
-      # Este comando confirma que Node.js está funcionando en el backend
+      - name: Build & push backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_BACKEND }}:latest
+            ${{ env.IMAGE_BACKEND }}:${{ github.sha }}
 
-    - name: Test frontend connectivity  
-      run: docker compose exec frontend ls /usr/share/nginx/html/index.html
-      # Verifico que nginx tenga los archivos del frontend
-      # Si encuentra index.html significa que el build se hizo correctamente y nginx lo está sirviendo
+      - name: Build & push frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend
+          file: ./frontend/Dockerfile
+          push: true
+          tags: |
+            ${{ env.IMAGE_FRONTEND }}:latest
+            ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
 
-      # 7. Apagar los servicios del docker
-    - name: Stop Docker services
-      run: docker compose down
-      # Apago y limpio los contenedores levantados
