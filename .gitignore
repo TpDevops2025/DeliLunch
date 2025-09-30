@@ -25,5 +25,8 @@ docker-compose.override.yml
 #Archivos fran
 comandosGit.md
 gitignore.txt
+node_modules/
+.png
+
 
 
