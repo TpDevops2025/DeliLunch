@@ -29,6 +29,10 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           push: false
+          build-args: |
+            NEW_RELIC_APP_NAME=${{secrets.NEW_RELIC_APP_NAME}}
+            NEW_RELIC_LICENSE_KEY=${{secrets.NEW_RELIC_LICENSE_KEY}}
+          # cuando se contruye la imagen del back se hace con las mismas config de new relic que en main
 
       - name: Build frontend image (no push)
         uses: docker/build-push-action@v6
