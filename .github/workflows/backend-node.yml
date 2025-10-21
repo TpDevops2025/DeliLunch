@@ -1,9 +1,9 @@
-# CI del backend: instala dependencias y ejecuta los tests de la API.
+# CI del backend: instala dependencias, corre ESLint y ejecuta los tests de la API.
 name: Backend (Node)
 
 on:
   pull_request:
-    branches: [ "main" ]          # corre SIEMPRE en PR → el ruleset no queda "Expected"
+    branches: [ "main" ]   # siempre en PR
   push:
     branches: [ "main" ]
     paths: [ "backend/**", ".github/workflows/backend-node.yml" ]
@@ -28,10 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests
+      # LINTER (ESLint v9 con flat config eslint.config.js)
+      - name: ESLint (backend)
+        run: npm run lint
+
+      - name: Run tests (Jest)
         run: npm test -- --ci
         env:
           NEW_RELIC_APP_NAME: ${{ secrets.NEW_RELIC_APP_NAME }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           NEW_RELIC_ENABLED: false
-            #Asi la data de los test no queda en las metricas
+          # Evita que los tests reporten métricas a NR
