@@ -28,10 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 👇 NUEVO: Lint del backend
+      - name: ESLint (backend)
+        run: npm run lint
+
       - name: Run tests
         run: npm test -- --ci
         env:
           NEW_RELIC_APP_NAME: ${{ secrets.NEW_RELIC_APP_NAME }}
           NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
           NEW_RELIC_ENABLED: false
-            #Asi la data de los test no queda en las metricas
+
