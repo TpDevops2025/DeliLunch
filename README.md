@@ -1,4 +1,4 @@
-# Deli Lunch - Proyecto Integrador de Arquitectura Web.
+# Deli Lunch - Proyecto Integrador DevOps
 ¡Bienvenidos a Deli Lunch! 🧑‍🍳 Esta aplicación permite gestionar productos, pedidos y visualizar reportes desde una interfaz moderna. Fue desarrollada como trabajo práctico de la materia Arquitectura Web. Incluye backend en Node.js con Express y SQLite, y frontend en React, todo bajo el patrón de diseño MVC.
 
 ## Estructura del proyecto 📁 
