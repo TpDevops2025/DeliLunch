@@ -6,7 +6,8 @@
     "init-db": "node initDB.js",
     "test": "jest",
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Magali Sarmiento",
