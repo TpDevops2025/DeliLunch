@@ -28,5 +28,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 👇 NUEVO: Lint del frontend
+      - name: ESLint (frontend)
+        run: npm run lint
+
       - name: Build React
         run: npm run build
