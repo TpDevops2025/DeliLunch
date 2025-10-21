@@ -6,7 +6,8 @@
     "init-db": "node initDB.js",
     "test": "jest",
     "dev": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Magali Sarmiento",
@@ -19,9 +20,11 @@
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
+    "@eslint/js": "^9.38.0",
+    "eslint": "^9.0.0",
     "jest": "^29.7.0",
+    "newrelic": "latest",
     "nodemon": "^3.0.0",
-    "supertest": "^7.1.0",
-    "newrelic": "latest"
+    "supertest": "^7.1.0"
   }
 }
