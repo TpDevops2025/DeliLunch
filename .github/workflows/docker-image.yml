@@ -81,7 +81,8 @@ jobs:
             ${{ env.IMAGE_FRONTEND }}:latest
             ${{ env.IMAGE_FRONTEND }}:${{ github.sha }}
       - name: Enviar a Render
-        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND}}&imageUrl=${{secrets.DOCKERHUB_USERNAME}}/deli-backend:latest"
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_BACKEND}}&imageUrl=${{secrets.DOCKERHUB_USERNAME}}/deli-backend:${{github.sha}}"
         # curl viene con ubuntu es para abrir http osea links
         # -X es para que sea una peticion
         # POST es de http que es para eviar datos (chekear)
+        #cambiamso de la imagen lastest a -> github.sha que es el hash que se crea cuando commit
