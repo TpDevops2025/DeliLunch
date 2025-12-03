@@ -1,28 +1,27 @@
 # Stage 1: Compilación de la aplicación de React
 FROM node:18-alpine AS build
-
 WORKDIR /app
 
-# Copiamos package.json y package-lock.json para cachear la instalación de dependencias
 COPY package*.json ./
+RUN npm ci
 
-# Instalamos las dependencias
-RUN npm install
-
-# Copiamos el resto de los archivos de la aplicación
 COPY . .
-
-# Compilamos la aplicación de React
 RUN npm run build
 
-# Stage 2: Servir la aplicación con Nginx
+# Stage 2: Servir la app con Nginx
 FROM nginx:alpine
+WORKDIR /usr/share/nginx/html
 
-# Copiamos los archivos estáticos (el resultado de 'npm run build') al directorio de Nginx
-COPY --from=build /app/build /usr/share/nginx/html
+LABEL org.opencontainers.image.source="https://github.com/TpDevops2025/DeliLunch" \
+      org.opencontainers.image.description="DeliLunch Frontend - React App" \
+      org.opencontainers.image.authors="Magali Sarmiento" \
+      org.opencontainers.image.licenses="MIT"
 
-# Expone el puerto por defecto de Nginx
+COPY --from=build --chown=nginx:nginx /app/build .
+
 EXPOSE 80
 
-# Comando para iniciar Nginx
+# Ejecutamos con usuario sin privilegios
+USER nginx
+
 CMD ["nginx", "-g", "daemon off;"]
