@@ -1,5 +1,29 @@
-node_modules
+# Dependencias y artefactos pesados
+node_modules/
 npm-debug.log
+yarn.lock
+
+# Variables y archivos sensibles
 .env
-.git
+*.env
+
+# Logs
+*.log
+logs/
+
+# Carpeta de tests (no necesaria en la imagen final)
+tests/
+
+# Directorios de build / cobertura
+dist/
+build/
+coverage/
+
+# Archivos del repo git
+.git/
 .gitignore
+
+# Cachés y archivos innecesarios
+.eslintcache
+.DS_Store
+*.md
